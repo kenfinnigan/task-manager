@@ -42,6 +42,19 @@
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-cache</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>io.quarkiverse.githubapi</groupId>
+      <artifactId>quarkiverse-github-api</artifactId>
+      <version>0.0.1</version>
+    </dependency>
+
+    <!-- Needed for @MultipartForm -->
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>resteasy-multipart-provider</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-junit5</artifactId>

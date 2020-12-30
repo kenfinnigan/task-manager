@@ -1,0 +1,13 @@
+{#include base.html}
+{#title}TaskList{/title}
+{#contents}
+  {#for task in tasks}
+    <div class="mt-2 mb-2 shadow-lg rounded-md bg-gray-100 cursor-pointer" up-expand>
+      <div class="px-4 py-2">
+        <span class="text-lg font-semibold">{task.title}</span>
+        <a href="/task/{task.number}" class="hidden" up-drawer="#task">Task</a>
+      </div>
+    </div>
+  {/for}
+{/contents}
+{/include}
