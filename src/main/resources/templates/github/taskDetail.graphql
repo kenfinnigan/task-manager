@@ -1,0 +1,10 @@
+query taskDetail {
+  repository(name: "{repository}", owner: "{user}") {
+    issue(number: {taskNumber}) {
+      body
+      id
+      number
+      title
+    }
+  }
+}

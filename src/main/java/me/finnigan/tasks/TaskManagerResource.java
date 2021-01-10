@@ -2,7 +2,7 @@ package me.finnigan.tasks;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -17,20 +17,19 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
-import org.kohsuke.github.GHIssue;
 
 import io.quarkus.qute.TemplateInstance;
 import io.quarkus.qute.api.CheckedTemplate;
+import me.finnigan.tasks.github.GitHubService;
+import me.finnigan.tasks.model.Task;
 
 @Path("/")
 public class TaskManagerResource {
   @CheckedTemplate(basePath = "")
-  public static class Templates {
-      public static native TemplateInstance index(List<GHIssue> tasks);
-
-      public static native TemplateInstance viewTask(GHIssue task);
-
-      public static native TemplateInstance editTask(GHIssue task);
+  private static class Templates {
+      public static native TemplateInstance index(Collection<Task> tasks);
+      public static native TemplateInstance viewTask(Task task);
+      public static native TemplateInstance editTask(Task task);
   }
 
   @Inject
@@ -40,7 +39,7 @@ public class TaskManagerResource {
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance homepage() throws IOException {
-    return Templates.index(githubService.allTasks());
+    return Templates.index(githubService.allOpenTasks());
   }
 
   @GET
@@ -54,7 +53,6 @@ public class TaskManagerResource {
       return Templates.viewTask(githubService.task(taskNumber));
     }
   }
-
 
   @POST
   @Consumes(MediaType.MULTIPART_FORM_DATA)

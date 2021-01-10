@@ -1,0 +1,12 @@
+query allOpenIssues {
+  repository(name: "{repository}", owner: "{user}") {
+    issues(first: 30, filterBy: { states: OPEN }) {
+      nodes {
+        body
+        id
+        number
+        title
+      }
+    }
+  }
+}

@@ -42,11 +42,9 @@
         <groupId>io.quarkus</groupId>
         <artifactId>quarkus-cache</artifactId>
     </dependency>
-
     <dependency>
-      <groupId>io.quarkiverse.githubapi</groupId>
-      <artifactId>quarkiverse-github-api</artifactId>
-      <version>0.0.1</version>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-rest-client-jackson</artifactId>
     </dependency>
 
     <!-- Needed for @MultipartForm -->
