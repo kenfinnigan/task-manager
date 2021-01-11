@@ -28,8 +28,9 @@ public class TaskManagerResource {
   @CheckedTemplate(basePath = "")
   private static class Templates {
       public static native TemplateInstance index(Collection<Task> tasks);
+      public static native TemplateInstance createTask();
       public static native TemplateInstance viewTask(Task task);
-      public static native TemplateInstance editTask(Task task);
+      public static native TemplateInstance editTask(Task task, String fieldFocus);
   }
 
   @Inject
@@ -43,15 +44,39 @@ public class TaskManagerResource {
   }
 
   @GET
+  @Path("/task")
+  @Consumes(MediaType.TEXT_HTML)
+  @Produces(MediaType.TEXT_HTML)
+  public TemplateInstance createTaskPage() throws IOException {
+    return Templates.createTask();
+  }
+
+  @GET
   @Path("/task/{id}")
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
-  public TemplateInstance task(@PathParam("id") int taskNumber, @QueryParam("edit") boolean update) throws IOException {
+  public TemplateInstance taskPage(@PathParam("id") int taskNumber, @QueryParam("edit") boolean update, @QueryParam("focus") String focusFieldName) throws IOException {
     if (update) {
-      return Templates.editTask(githubService.task(taskNumber));
+      return Templates.editTask(githubService.task(taskNumber), focusFieldName);
     } else {
       return Templates.viewTask(githubService.task(taskNumber));
     }
+  }
+
+  @POST
+  @Consumes(MediaType.MULTIPART_FORM_DATA)
+  @Path("/task")
+  public Response createTask(@MultipartForm TaskForm taskForm) {
+    try {
+      githubService.createTask(taskForm.title, taskForm.body);
+    } catch (IOException e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.getLocalizedMessage())
+          .build();
+    }
+    return Response.status(Status.MOVED_PERMANENTLY)
+          .location(URI.create("/"))
+          .build();
   }
 
   @POST

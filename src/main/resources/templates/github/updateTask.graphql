@@ -1,7 +1,6 @@
 mutation updateTask {
   updateIssue(input: { id: "{id}", body: "{body}", title: "{title}" }) {
     issue {
-      body
       title
     }
   }

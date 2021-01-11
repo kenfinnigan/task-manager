@@ -17,10 +17,15 @@
     <div class="main">
       <div class="flex justify-center h-screen bg-indigo-100">
         <div class="flex-initial rounded-lg shadow p-6 ml-4 mr-4 mt-4 mb-20 bg-indigo-200 max-w-screen-sm">
-          <div class="mb-10 border-b-2 text-center text-6xl font-serif font-bold">
+          <div class="mb-10 border-b-2 text-center text-6xl font-serif font-bold flex">
             <h1>
               <span>{#insert title}Default Title{/}</span>
             </h1>
+            <svg class="flex-1 stroke-current text-indigo-800 w-12 h-12 ml-10 mt-2" up-expand xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <a href="/task" up-drawer="#task">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </a>
+            </svg>
           </div>
           <div class="page-content">
             {#insert contents}No contents!{/}

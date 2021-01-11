@@ -2,10 +2,10 @@
   <div class="flex px-4 h-14">
     <input class="mr-4 leading-tight h-6 w-6" type="checkbox">
     <div>
-      <span class="text-lg font-medium" onclick="up.replace('#task', '/task/{task.number}?edit=true')">{task.title}</span>
+      <span class="text-lg font-medium" onclick="up.replace('#task', '/task/{task.number}?edit=true&focus=title')">{task.title}</span>
     </div>
   </div>
   <div class="relative pt-4 px-4 border-t-2 border-blue-700">
-    <pre class="text-sm whitespace-pre-line" onclick="up.replace('#task', '/task/{task.number}?edit=true')">{task.body}</pre>
+    <pre class="text-sm whitespace-pre-line" onclick="up.replace('#task', '/task/{task.number}?edit=true&focus=body')">{task.body}</pre>
   </div>
 </div>

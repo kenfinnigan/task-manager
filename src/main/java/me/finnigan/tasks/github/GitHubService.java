@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -22,14 +23,19 @@ public class GitHubService {
 
   @CheckedTemplate(basePath = "github")
   private static class Templates {
+    public static native TemplateInstance repoDetails(String user, String repository);
     public static native TemplateInstance allOpenIssues(String user, String repository);
     public static native TemplateInstance taskDetail(String user, String repository, int taskNumber);
     public static native TemplateInstance updateTask(String id, String title, String body);
+    public static native TemplateInstance createTask(String repositoryId, String issueTemplate, String title, String body);
   }
 
   private final String token;
   private final String user;
   private final String repository;
+  private final String defaultIssueTemplate;
+
+  private String repositoryGlobalId;
 
   @Inject
   @RestClient
@@ -38,10 +44,24 @@ public class GitHubService {
   @Inject
   public GitHubService(@ConfigProperty(name = "github.token") String token,
       @ConfigProperty(name = "github.user") String ghUser,
-      @ConfigProperty(name = "github.repository") String ghRepo) {
+      @ConfigProperty(name = "github.repository") String ghRepo,
+      @ConfigProperty(name = "github.task-template.default") String defaultIssueTemplate) {
     this.user = ghUser;
     this.repository = ghRepo;
     this.token = "Bearer " + token;
+    this.defaultIssueTemplate = defaultIssueTemplate;
+  }
+
+  @PostConstruct
+  void getRepositoryId() {
+    String query = Templates.repoDetails(user, repository).render();
+    JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
+
+    if (response.getJsonArray("errors") != null) {
+        throw new RuntimeException(response.toString());
+    }
+
+    repositoryGlobalId = response.getJsonObject("data").getJsonObject("repository").getString("id");
   }
 
   public Collection<Task> allOpenTasks() throws IOException {
@@ -73,6 +93,15 @@ public class GitHubService {
     return response.getJsonObject("data").getJsonObject("repository").getJsonObject("issue").mapTo(Task.class);
   }
 
+  public void createTask(String title, String body) throws IOException {
+    String query = Templates.createTask(repositoryGlobalId, defaultIssueTemplate, title, body).render();
+    JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
+
+    if (response.getJsonArray("errors") != null) {
+        throw new IOException(response.toString());
+    }
+  }
+  
   public void updateTask(int taskNumber, String title, String body) throws IOException {
     Task task = task(taskNumber);
 

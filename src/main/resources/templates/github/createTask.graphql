@@ -1,0 +1,11 @@
+mutation createIssue {
+  createIssue(input: {
+      repositoryId: "{repositoryId}",
+      title: "{title}",
+      issueTemplate: "{issueTemplate}",
+      body: "{body}"}) {
+    issue {
+      number
+    }
+  }
+}

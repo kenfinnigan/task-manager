@@ -1,0 +1,5 @@
+query repoDetails {
+  repository(name: "{repository}", owner: "{user}") {
+    id
+  }
+}
