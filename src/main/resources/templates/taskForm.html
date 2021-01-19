@@ -1,6 +1,6 @@
 <form action="/task/{#if edit}{task.number}{/if}" method="POST" name="taskForm" enctype="multipart/form-data" up-target>
   <div class="flex px-4 h-14">
-    <input class="mr-4 leading-tight h-6 w-6" type="checkbox" id="completed" name="completed">
+    <input class="mr-4 leading-tight h-6 w-6" type="checkbox" disabled>
     <div class="w-full">
       <input class="w-full" type="text" id="title" name="title" required {#if focus is 'title'}autofocus{/if} {#if edit}value="{task.title}"{/if}></input>
     </div>

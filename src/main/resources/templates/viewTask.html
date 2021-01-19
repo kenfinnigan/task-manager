@@ -1,6 +1,6 @@
 <div id="task" class="space-y-6 py-6 bg-indigo-100 shadow-xl overflow-y-scroll">
   <div class="flex px-4 h-14">
-    <input class="mr-4 leading-tight h-6 w-6" type="checkbox">
+    <input class="mr-4 leading-tight h-6 w-6" type="checkbox" onclick="completeTask({task.number})" up-close>
     <div>
       <span class="text-lg font-medium" onclick="up.replace('#task', '/task/{task.number}?edit=true&focus=title')">{task.title}</span>
     </div>

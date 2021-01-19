@@ -52,10 +52,10 @@ public class TaskManagerResource {
   }
 
   @GET
-  @Path("/task/{id}")
+  @Path("/task/{number}")
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
-  public TemplateInstance taskPage(@PathParam("id") int taskNumber, @QueryParam("edit") boolean update, @QueryParam("focus") String focusFieldName) throws IOException {
+  public TemplateInstance taskPage(@PathParam("number") int taskNumber, @QueryParam("edit") boolean update, @QueryParam("focus") String focusFieldName) throws IOException {
     if (update) {
       return Templates.editTask(githubService.task(taskNumber), focusFieldName);
     } else {
@@ -81,17 +81,43 @@ public class TaskManagerResource {
 
   @POST
   @Consumes(MediaType.MULTIPART_FORM_DATA)
-  @Path("/task/{id}")
-  public Response updateTask(@PathParam("id") int taskNumber, @MultipartForm TaskForm taskForm) {
+  @Path("/task/{number}")
+  public Response updateTask(@PathParam("number") int taskNumber, @MultipartForm TaskForm taskForm) {
     try {
       githubService.updateTask(taskNumber, taskForm.title, taskForm.body);
+      return Response.status(Status.MOVED_PERMANENTLY)
+                      .location(URI.create("/"))
+                      .build();
     } catch (IOException e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
           .entity(e.getLocalizedMessage())
           .build();
     }
-    return Response.status(Status.MOVED_PERMANENTLY)
-          .location(URI.create("/"))
+  }
+
+  @POST
+  @Path("/task/{number}/complete")
+  public Response completeTask(@PathParam("number") int taskNumber) {
+    try {
+      githubService.closeTask(taskNumber, "[COMPLETED]");
+      return Response.noContent().build();
+    } catch (IOException e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.getLocalizedMessage())
           .build();
+    }
+  }
+
+  @POST
+  @Path("/task/{number}/delete")
+  public Response deleteTask(@PathParam("number") int taskNumber) {
+    try {
+      githubService.closeTask(taskNumber, "[DELETED]");
+      return Response.noContent().build();
+    } catch (IOException e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(e.getLocalizedMessage())
+          .build();
+    }
   }
 }

@@ -1,0 +1,5 @@
+mutation createComment {
+  addComment(input: { subjectId: "{nodeId}", body: "{comment}" }) {
+    clientMutationId
+  }
+}

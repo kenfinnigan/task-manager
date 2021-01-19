@@ -1,0 +1,10 @@
+mutation closeTask {
+  addComment(input: { subjectId: "{taskId}", body: "{comment}" }) {
+    clientMutationId
+  }
+  closeIssue(input: { issueId: "{taskId}" }) {
+    issue {
+      title
+    }
+  }
+}
