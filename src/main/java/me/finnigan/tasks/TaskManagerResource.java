@@ -31,6 +31,7 @@ public class TaskManagerResource {
       public static native TemplateInstance createTask();
       public static native TemplateInstance viewTask(Task task);
       public static native TemplateInstance editTask(Task task, String fieldFocus);
+      public static native TemplateInstance errorMessage(String title, String message);
   }
 
   @Inject
@@ -101,9 +102,9 @@ public class TaskManagerResource {
     try {
       githubService.closeTask(taskNumber, "[COMPLETED]");
       return Response.noContent().build();
-    } catch (IOException e) {
+    } catch (Exception e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(e.getLocalizedMessage())
+          .entity(Templates.errorMessage("Failed to complete task - #" + taskNumber, e.getLocalizedMessage()).render())
           .build();
     }
   }
@@ -116,8 +117,8 @@ public class TaskManagerResource {
       return Response.noContent().build();
     } catch (IOException e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(e.getLocalizedMessage())
-          .build();
+      .entity(Templates.errorMessage("Failed to delete task - #" + taskNumber, e.getLocalizedMessage()).render())
+      .build();
     }
   }
 }

@@ -43,9 +43,21 @@
             });
           })
           .catch(error => {
-            //TODO Add some kind of message to indicate failure?
-            console.log('Failed to complete');
+            up.extract('#msg-alert', error.text);
+            up.animate('#msg-alert', 'fade-in', {
+              delay: 0,
+              duration: 250,
+              easing: 'linear'
+            });
+            setTimeout(closeMessage, 2000);
           });
+    }
+    function closeMessage() {
+      up.animate('#msg-alert', 'fade-out', {
+                delay: 0,
+                duration: 250,
+                easing: 'linear'
+              });
     }
   </script>
 {/contents}
