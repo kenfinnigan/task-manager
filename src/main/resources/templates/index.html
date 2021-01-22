@@ -3,62 +3,21 @@
 {#contents}
   {#for task in tasks}
     <div id="task_{task.number}" class="mt-2 mb-2 shadow-lg rounded-md bg-gray-100 cursor-pointer">
-      <div class="px-4 py-2 items-center grid grid-cols-12">
+      <div class="px-4 py-2 items-center grid grid-cols-12" up-expand="#open_{task.number}">
         <div>
-          <form>
-            <input class="mr-4 leading-tight h-6 w-6" type="checkbox" onclick="completeTask({task.number})">
-          </form>
+          <input class="mr-4 leading-tight h-6 w-6" type="checkbox" up-target="#task_{task.number}" up-href="/task/{task.number}/complete" up-method="post" up-transition="fade-out" up-fail-target="#msg-container" up-fail-transition="fade-in" up-history="false">
         </div>
-        <div class="col-span-10" up-expand>
+        <div class="col-span-10">
           <span class="text-lg font-semibold">{task.title}</span>
-          <a href="/task/{task.number}" class="hidden" up-drawer="#task">Task</a>
+          <a href="/task/{task.number}" id="open_{task.number}" class="hidden" up-drawer="#task">Task</a>
         </div>
-        <div up-expand>
-          <svg class="w-6 h-6 text-indigo-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" onclick="deleteTask({task.number})">
+        <div>
+          <svg class="w-6 h-6 text-indigo-500 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"  up-target="#task_{task.number}" up-href="/task/{task.number}/delete" up-method="post" up-transition="fade-out" up-fail-target="#msg-container" up-fail-transition="fade-in" up-history="false">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
         </div>
       </div>
     </div>
   {/for}
-  <script>
-    function completeTask(taskNumber) {
-      closeTaskRequest(taskNumber, 'complete');
-    }
-    function deleteTask(taskNumber) {
-      closeTaskRequest(taskNumber, 'delete');
-    }
-    function closeTaskRequest(taskNumber, type) {
-      up.request(
-            '/task/' + taskNumber + '/' + type,
-            {
-              method: 'POST',
-              cache: false
-            })
-          .then(response => {
-            up.animate('#task_' + taskNumber, 'fade-out', {
-              delay: 0,
-              duration: 300,
-              easing: 'linear'
-            });
-          })
-          .catch(error => {
-            up.extract('#msg-alert', error.text);
-            up.animate('#msg-alert', 'fade-in', {
-              delay: 0,
-              duration: 250,
-              easing: 'linear'
-            });
-            setTimeout(closeMessage, 2000);
-          });
-    }
-    function closeMessage() {
-      up.animate('#msg-alert', 'fade-out', {
-                delay: 0,
-                duration: 250,
-                easing: 'linear'
-              });
-    }
-  </script>
 {/contents}
 {/include}

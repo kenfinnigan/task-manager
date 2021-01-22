@@ -32,6 +32,7 @@ public class TaskManagerResource {
       public static native TemplateInstance viewTask(Task task);
       public static native TemplateInstance editTask(Task task, String fieldFocus);
       public static native TemplateInstance errorMessage(String title, String message);
+      public static native TemplateInstance completedTask(int taskNumber);
   }
 
   @Inject
@@ -101,10 +102,12 @@ public class TaskManagerResource {
   public Response completeTask(@PathParam("number") int taskNumber) {
     try {
       githubService.closeTask(taskNumber, "[COMPLETED]");
-      return Response.noContent().build();
+      return Response
+          .ok(Templates.completedTask(taskNumber))
+          .build();
     } catch (Exception e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(Templates.errorMessage("Failed to complete task - #" + taskNumber, e.getLocalizedMessage()).render())
+          .entity(Templates.errorMessage("Failed to complete task - #" + taskNumber, e.getLocalizedMessage()))
           .build();
     }
   }
@@ -114,10 +117,12 @@ public class TaskManagerResource {
   public Response deleteTask(@PathParam("number") int taskNumber) {
     try {
       githubService.closeTask(taskNumber, "[DELETED]");
-      return Response.noContent().build();
+      return Response
+          .ok(Templates.completedTask(taskNumber))
+          .build();
     } catch (IOException e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-      .entity(Templates.errorMessage("Failed to delete task - #" + taskNumber, e.getLocalizedMessage()).render())
+      .entity(Templates.errorMessage("Failed to delete task - #" + taskNumber, e.getLocalizedMessage()))
       .build();
     }
   }

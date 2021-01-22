@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body>
-    <div id="msg-alert"></div>
+    <div id="msg-container">
+    </div>
     <div class="main">
       <div class="flex justify-center h-screen bg-indigo-100">
         <div class="flex-initial rounded-lg shadow p-6 ml-4 mr-4 mt-4 mb-20 bg-indigo-200 max-w-screen-sm">
@@ -34,5 +35,17 @@
         </div>
       </div>
     </div>
+    <script>
+      up.compiler('#msg-alert', function(element) {
+        setTimeout(function() {
+          up.destroy('#msg-alert', {
+                    animation: 'fade-out',
+                    delay: 0,
+                    duration: 250,
+                    easing: 'linear'
+                  });
+        }, 2000);
+      });
+    </script>
   </body>
 </html>
