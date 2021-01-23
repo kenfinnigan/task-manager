@@ -59,16 +59,23 @@ public class GitHubService {
     this.defaultIssueTemplate = defaultIssueTemplate;
   }
 
-  @PostConstruct
-  void getRepositoryId() {
-    String query = Templates.repoDetails(user, repository).render();
-    JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
+  private String getRepositoryId() {
+    if (repositoryGlobalId == null) {
+      String query = Templates.repoDetails(user, repository).render();
+      JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
 
-    if (response.getJsonArray("errors") != null) {
-        throw new RuntimeException(response.toString());
+      if (response.getJsonArray("errors") != null) {
+          throw new RuntimeException(getErrorMessage(response));
+      }
+
+      repositoryGlobalId = response.getJsonObject("data").getJsonObject("repository").getString("id");
     }
 
-    repositoryGlobalId = response.getJsonObject("data").getJsonObject("repository").getString("id");
+    return repositoryGlobalId;
+  }
+
+  private String getErrorMessage(JsonObject response) {
+    return response.getJsonArray("errors").getJsonObject(0).getString("message");
   }
 
   @CacheResult(cacheName = TASK_CACHE_NAME)
@@ -77,7 +84,7 @@ public class GitHubService {
     JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
 
     if (response.getJsonArray("errors") != null) {
-        throw new IOException(response.toString());
+        throw new IOException(getErrorMessage(response));
     }
 
     List<Task> tasks = new ArrayList<>();
@@ -97,18 +104,18 @@ public class GitHubService {
     JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
 
     if (response.getJsonArray("errors") != null) {
-        throw new IOException(response.toString());
+        throw new IOException(getErrorMessage(response));
     }
     return response.getJsonObject("data").getJsonObject("repository").getJsonObject("issue").mapTo(Task.class);
   }
 
   @CacheInvalidateAll(cacheName = TASK_CACHE_NAME)
   public void createTask(String title, String body) throws IOException {
-    String query = Templates.createTask(repositoryGlobalId, defaultIssueTemplate, title, body).render();
+    String query = Templates.createTask(getRepositoryId(), defaultIssueTemplate, title, body).render();
     JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
 
     if (response.getJsonArray("errors") != null) {
-        throw new IOException(response.toString());
+        throw new IOException(getErrorMessage(response));
     }
   }
 
@@ -119,7 +126,7 @@ public class GitHubService {
     JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
 
     if (response.getJsonArray("errors") != null) {
-        throw new IOException(response.toString());
+        throw new IOException(getErrorMessage(response));
     }
   }
 
@@ -131,7 +138,7 @@ public class GitHubService {
     JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
 
     if (response.getJsonArray("errors") != null) {
-        throw new IOException(response.toString());
+        throw new IOException(getErrorMessage(response));
     }
   }
 
@@ -140,7 +147,7 @@ public class GitHubService {
     JsonObject response = client.executeQuery(token, new JsonObject().put("query", query));
 
     if (response.getJsonArray("errors") != null) {
-        throw new IOException(response.toString());
+        throw new IOException(getErrorMessage(response));
     }
   }
 }

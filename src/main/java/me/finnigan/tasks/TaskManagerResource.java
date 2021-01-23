@@ -42,23 +42,30 @@ public class TaskManagerResource {
   @GET
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
-  public TemplateInstance homepage() throws IOException {
+  public TemplateInstance homepage() {
     return Templates.index();
   }
 
   @GET
   @Path("/task")
   @Consumes(MediaType.TEXT_HTML)
-  @Produces(MediaType.TEXT_HTML)
-  public TemplateInstance allTasksPage() throws IOException {
-    return Templates.allTasks(githubService.allOpenTasks());
+  public Response allTasksPage() {
+    try {
+      return Response
+          .ok(Templates.allTasks(githubService.allOpenTasks()))
+          .build();
+    } catch (Exception e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(Templates.errorMessage("Failed to retrieve tasks", e.getLocalizedMessage()))
+          .build();
+    }
   }
 
   @GET
   @Path("/task/create")
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
-  public TemplateInstance createTaskPage() throws IOException {
+  public TemplateInstance createTaskPage() {
     return Templates.createTask();
   }
 

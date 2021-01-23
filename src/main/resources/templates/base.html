@@ -49,6 +49,7 @@
       up.compiler('#taskLoading', function() {
         setTimeout(function() {
           up.replace('#taskList', '/task', {
+                    failTarget: '#msg-container',
                     history: false,
                     source: false,
                     transition: 'fade-in',
