@@ -27,7 +27,8 @@ import me.finnigan.tasks.model.Task;
 public class TaskManagerResource {
   @CheckedTemplate(basePath = "")
   private static class Templates {
-      public static native TemplateInstance index(Collection<Task> tasks);
+      public static native TemplateInstance index();
+      public static native TemplateInstance allTasks(Collection<Task> tasks);
       public static native TemplateInstance createTask();
       public static native TemplateInstance viewTask(Task task);
       public static native TemplateInstance editTask(Task task, String fieldFocus);
@@ -42,11 +43,19 @@ public class TaskManagerResource {
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance homepage() throws IOException {
-    return Templates.index(githubService.allOpenTasks());
+    return Templates.index();
   }
 
   @GET
   @Path("/task")
+  @Consumes(MediaType.TEXT_HTML)
+  @Produces(MediaType.TEXT_HTML)
+  public TemplateInstance allTasksPage() throws IOException {
+    return Templates.allTasks(githubService.allOpenTasks());
+  }
+
+  @GET
+  @Path("/task/create")
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
   public TemplateInstance createTaskPage() throws IOException {

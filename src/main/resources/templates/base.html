@@ -24,7 +24,7 @@
               <span>{#insert title}Default Title{/}</span>
             </h1>
             <svg class="flex-1 stroke-current text-indigo-800 w-12 h-12 ml-10 mt-2" up-expand xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <a href="/task" up-drawer="#task">
+              <a href="/task/create" up-drawer="#task">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
               </a>
             </svg>
@@ -36,7 +36,7 @@
       </div>
     </div>
     <script>
-      up.compiler('#msg-alert', function(element) {
+      up.compiler('#msg-alert', function() {
         setTimeout(function() {
           up.destroy('#msg-alert', {
                     animation: 'fade-out',
@@ -45,6 +45,18 @@
                     easing: 'linear'
                   });
         }, 2000);
+      });
+      up.compiler('#taskLoading', function() {
+        setTimeout(function() {
+          up.replace('#taskList', '/task', {
+                    history: false,
+                    source: false,
+                    transition: 'fade-in',
+                    headers: {
+                      'Accept': 'text/html'
+                    }
+                  });
+        }, 1500);
       });
     </script>
   </body>
