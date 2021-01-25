@@ -1,1 +1,17 @@
-{#include messageTemplate.html color='red' /}
+{#include base.html}
+  {#title}Error - {title}{/title}
+  {#message}
+    {#include messageTemplate.html color='red'}
+      {#detailMessage}{exception.getLocalizedMessage}{/detailMessage}
+    {/include}
+  {/message}
+  {#pageContent}
+    <div class="flex-col">
+      <div class="text-4xl font-semibold leading-10 text-center pt-6">{title}</div>
+      <div id="reversed-stacktrace" class="p-16 m-16 m-auto border-solid border-2 border-gray-200 overflow-y-scroll">
+        <p><em>The stacktrace below has been reversed to show the root cause first.
+        <pre class="whitespace-pre font-mono text-xs leading-normal text-gray-600 pt-4">{exception.rootCauseFirstStackTrace}</pre>
+      </div>
+    </div>
+  {/pageContent}
+{/include}

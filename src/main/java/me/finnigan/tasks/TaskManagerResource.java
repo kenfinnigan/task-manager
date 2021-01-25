@@ -1,6 +1,5 @@
 package me.finnigan.tasks;
 
-import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 
@@ -32,7 +31,7 @@ public class TaskManagerResource {
       public static native TemplateInstance createTask();
       public static native TemplateInstance viewTask(Task task);
       public static native TemplateInstance editTask(Task task, String fieldFocus);
-      public static native TemplateInstance errorMessage(String title, String message);
+      public static native TemplateInstance errorMessage(String title, Exception exception);
       public static native TemplateInstance completedTask(int taskNumber);
   }
 
@@ -49,6 +48,7 @@ public class TaskManagerResource {
   @GET
   @Path("/task")
   @Consumes(MediaType.TEXT_HTML)
+  @Produces(MediaType.TEXT_HTML)
   public Response allTasksPage() {
     try {
       return Response
@@ -56,7 +56,7 @@ public class TaskManagerResource {
           .build();
     } catch (Exception e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(Templates.errorMessage("Failed to retrieve tasks", e.getLocalizedMessage()))
+          .entity(Templates.errorMessage("Failed to retrieve tasks", e))
           .build();
     }
   }
@@ -73,11 +73,31 @@ public class TaskManagerResource {
   @Path("/task/{number}")
   @Consumes(MediaType.TEXT_HTML)
   @Produces(MediaType.TEXT_HTML)
-  public TemplateInstance taskPage(@PathParam("number") int taskNumber, @QueryParam("edit") boolean update, @QueryParam("focus") String focusFieldName) throws IOException {
-    if (update) {
-      return Templates.editTask(githubService.task(taskNumber), focusFieldName);
-    } else {
-      return Templates.viewTask(githubService.task(taskNumber));
+  public Response viewTaskPage(@PathParam("number") int taskNumber) {
+    try {
+      return Response
+          .ok(Templates.viewTask(githubService.task(taskNumber)))
+          .build();
+    } catch (Exception e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(Templates.errorMessage("Failed to retrieve task - #" + taskNumber, e))
+          .build();
+    }
+  }
+
+  @GET
+  @Path("/task/{number}/edit")
+  @Consumes(MediaType.TEXT_HTML)
+  @Produces(MediaType.TEXT_HTML)
+  public Response editTaskPage(@PathParam("number") int taskNumber, @QueryParam("focus") String focusFieldName) {
+    try {
+      return Response
+          .ok(Templates.editTask(githubService.task(taskNumber), focusFieldName))
+          .build();
+    } catch (Exception e) {
+      return Response.status(Status.INTERNAL_SERVER_ERROR)
+          .entity(Templates.errorMessage("Failed to retrieve task - #" + taskNumber, e))
+          .build();
     }
   }
 
@@ -87,13 +107,13 @@ public class TaskManagerResource {
   public Response createTask(@MultipartForm TaskForm taskForm) {
     try {
       githubService.createTask(taskForm.title, taskForm.body);
-    } catch (IOException e) {
+    } catch (Exception e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(e.getLocalizedMessage())
+          .entity(Templates.errorMessage("Failed to create task", e))
           .build();
     }
     return Response.status(Status.MOVED_PERMANENTLY)
-          .location(URI.create("/"))
+          .location(URI.create("/task"))
           .build();
   }
 
@@ -104,16 +124,17 @@ public class TaskManagerResource {
     try {
       githubService.updateTask(taskNumber, taskForm.title, taskForm.body);
       return Response.status(Status.MOVED_PERMANENTLY)
-                      .location(URI.create("/"))
+                      .location(URI.create("/task"))
                       .build();
-    } catch (IOException e) {
+    } catch (Exception e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(e.getLocalizedMessage())
+          .entity(Templates.errorMessage("Failed to update task - #" + taskNumber, e))
           .build();
     }
   }
 
   @POST
+  @Produces(MediaType.TEXT_HTML)
   @Path("/task/{number}/complete")
   public Response completeTask(@PathParam("number") int taskNumber) {
     try {
@@ -123,12 +144,13 @@ public class TaskManagerResource {
           .build();
     } catch (Exception e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-          .entity(Templates.errorMessage("Failed to complete task - #" + taskNumber, e.getLocalizedMessage()))
+          .entity(Templates.errorMessage("Failed to complete task - #" + taskNumber, e))
           .build();
     }
   }
 
   @POST
+  @Produces(MediaType.TEXT_HTML)
   @Path("/task/{number}/delete")
   public Response deleteTask(@PathParam("number") int taskNumber) {
     try {
@@ -136,9 +158,9 @@ public class TaskManagerResource {
       return Response
           .ok(Templates.completedTask(taskNumber))
           .build();
-    } catch (IOException e) {
+    } catch (Exception e) {
       return Response.status(Status.INTERNAL_SERVER_ERROR)
-      .entity(Templates.errorMessage("Failed to delete task - #" + taskNumber, e.getLocalizedMessage()))
+      .entity(Templates.errorMessage("Failed to delete task - #" + taskNumber, e))
       .build();
     }
   }

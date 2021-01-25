@@ -118,7 +118,7 @@ public class GitHubService {
     }
   }
 
-  @CacheInvalidate(cacheName = TASK_CACHE_NAME)
+  @CacheInvalidateAll(cacheName = TASK_CACHE_NAME)
   public void updateTask(int taskNumber, String title, String body) throws IOException {
     Task task = task(taskNumber);
     String query = Templates.updateTask(task.id, title, body).render();
@@ -129,7 +129,7 @@ public class GitHubService {
     }
   }
 
-  @CacheInvalidateAll(cacheName = TASK_CACHE_NAME)
+  @CacheInvalidate(cacheName = TASK_CACHE_NAME)
   public void closeTask(int taskNumber, String closeMessage) throws IOException {
     Task task = task(taskNumber);
     

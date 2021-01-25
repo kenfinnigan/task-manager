@@ -1,3 +1,8 @@
-<div id="task" class="space-y-6 py-6 bg-indigo-100 shadow-xl overflow-y-scroll">
-  {#include taskForm.html edit=false focus=title /}
-</div>
+{#include base.html}
+  {#title}Create Task{/title}
+  {#pageContent}
+    <div id="task" class="space-y-6 py-6 bg-indigo-100 shadow-xl overflow-y-scroll">
+      {#include taskForm.html edit=false focus=title /}
+    </div>
+  {/pageContent}
+{/include}

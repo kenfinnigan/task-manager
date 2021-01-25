@@ -1,1 +1,7 @@
-{#include messageTemplate.html color='green' /}
+{#include base.html}
+  {#title}Error - {title}{/title}
+  {#message}
+    {#include messageTemplate.html color='green' /}
+  {/message}
+  {#pageContent}{/pageContent}
+{/include}
